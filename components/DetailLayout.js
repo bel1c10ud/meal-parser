@@ -50,7 +50,9 @@ export default function DetailLayout(props) {
       {
         Object.keys(props.detailJson.image).length > 0 ? 
         <Image
-          src={props.detailJson.image['url']}
+          src={'/api/image?url='+encodeURIComponent(props.detailJson.image['url'])}
+          unoptimized
+          // src={props.detailJson.image['url']}
           alt="Meal Picture"
           layout="responsive"
           width={props.detailJson.image['width']}
