@@ -30,9 +30,18 @@ export default (req, res) => {
 
     let array = $('.calendar_schedule td').map(function (i, el) {
       let ob = {};
-      let itemDate = new Date(`${year}-${month}-${$(this).text().trim().split('\n')[0]}`);
+      let date, ISODate;
+
+      if($(this).text().trim().split('\n')[0] === "") {
+        date = "0";
+        ISODate = null;
+      } else {
+        date = $(this).text().trim().split('\n')[0]
+        ISODate = `${year}-${month.length === 2 ? month : "0"+month}-${date.length === 2 ? date : "0"+date}T00:00:00+09:00`
+      }
+
       ob.id = i;
-      ob.date = `${year}-${month}-${$(this).text().trim().split('\n')[0]}-${itemDate.getDay()}`;
+      ob.date = ISODate;
       ob.mealArray = $(this).find('ul a').map(function (i, el) {
         let ob = {};
         ob.id = $(this).attr('onclick').split(`'`)[1];

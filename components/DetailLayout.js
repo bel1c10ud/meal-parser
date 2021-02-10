@@ -1,6 +1,9 @@
 import Head from 'next/head';
+import Image from 'next/image';
 
 export default function DetailLayout(props) {
+  const detailDate = new Date(props.detailJson.date);
+  const dayArray = ['일', '월', '화', '수', '목', '금', '토'];
   return (
     <>
       <Head>
@@ -10,7 +13,12 @@ export default function DetailLayout(props) {
         <div className="">    
           <p className="hidden">{props.detailJson.id}</p>
           <p className="text-base font-bold text-gray-600">
-            {props.detailJson.date}
+            {
+              detailDate.getFullYear() + "년 "
+              + (detailDate.getMonth()+1).toString() + "월 " 
+              + detailDate.getDate() + "일 "
+              + dayArray[detailDate.getDay()]+"요일"
+            }
           </p>
           <p>
             <span className="text-3xl font-bold text-gray-900">
@@ -38,12 +46,15 @@ export default function DetailLayout(props) {
         }
         </ul>
       </div>
-      <div className="">
+      <div className="w-full h-auto">
       {
-        props.detailJson.image ? 
-        <img
-          src={'/api/image?url='+encodeURIComponent(`http://sunrint.hs.kr${props.detailJson.image}`)}
+        Object.keys(props.detailJson.image).length > 0 ? 
+        <Image
+          src={props.detailJson.image['url']}
           alt="Meal Picture"
+          layout="responsive"
+          width={props.detailJson.image['width']}
+          height={props.detailJson.image['height']}
         /> : <div className="w-full h-72 bg-gray-200 text-white flex flex-wrap content-center justify-center"><p className="text-lg font-bold">이미지가 등록되지 않았습니다.</p></div>
       }</div>
     </>

@@ -65,35 +65,40 @@ function CalendarLayout(props) {
       <div className="grid md:grid-cols-7">
 {
   props.calendarJson.map(c => {
-    const [yaer, month, date, day] = c.date.split('-');
-    return (
-      <div key={c.id} 
-      className={`py-3 md:px-3 h-full border-b ${date != "" ? "" : "hidden md:block"}`}
-      >
-        <p className={
-          `text-2xl font-medium pr-4 md:mb-2  align-top inline-block md:block group-hover:text-white text-gray-900 ${day === "0" ? "text-red-600" : ""} ${day === "6" ? "text-blue-600" : ""}`
-        }>
-          {date}
-          <span className={`text-xs ml-1 align-middle md:hidden ${date != "" ? "" : "hidden"}`}>
-            ({dayArray[Number(day)]})
-          </span>
-        </p>
-        <div className="inline-block md:block h-auto pl-4 md:pl-0 border-l md:border-l-0 align-middle">
-        {c.mealArray.map(c => {
-          return (
-          <Link href={`/detail/[id]`} as={`/detail/${c.id}`}>
-            <a key={c.id} 
-            title={c.title} 
-            className="text-base block truncate my-2" 
-            >
-              <span className='select-none mr-1'>·</span>
-              <span className='hover:underline'>{c.title}</span>
-            </a>
-          </Link>)
-        })}
+    if(c.date === null) {
+      return (<div className="py-3 md:px-3 h-full border-b hidden md:block"></div>)
+    } else {
+      const currentDate = new Date(c.date);
+
+      return (
+        <div key={c.id} 
+        className={`py-3 md:px-3 h-full border-b`}
+        >
+          <p className={
+            `text-2xl font-medium pr-4 md:mb-2  align-top inline-block md:block group-hover:text-white text-gray-900 ${currentDate.getDay() === 0 ? "text-red-600" : ""} ${currentDate.getDay() === 6 ? "text-blue-600" : ""}`
+          }>
+            {currentDate.getDate()}
+            <span className={`text-xs ml-1 align-middle md:hidden`}>
+              ({dayArray[currentDate.getDay()]})
+            </span>
+          </p>
+          <div className="inline-block md:block h-auto pl-4 md:pl-0 border-l md:border-l-0 align-middle">
+          {c.mealArray.map(c => {
+            return (
+            <Link href={`/detail/[id]`} as={`/detail/${c.id}`}>
+              <a key={c.id} 
+              title={c.title} 
+              className="text-base block truncate my-2" 
+              >
+                <span className='select-none mr-1'>·</span>
+                <span className='hover:underline'>{c.title}</span>
+              </a>
+            </Link>)
+          })}
+          </div>
         </div>
-      </div>
-    )
+      )
+    }
   })
 }
       </div>
