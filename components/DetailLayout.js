@@ -42,7 +42,7 @@ export default function DetailLayout(props) {
       {
         props.detailJson.image ? 
         <img
-          src={`http://sunrint.hs.kr${props.detailJson.image}`}
+          src={'/api/image?url='+encodeURIComponent(`http://sunrint.hs.kr${props.detailJson.image}`)}
           alt="Meal Picture"
         /> : <div className="w-full h-72 bg-gray-200 text-white flex flex-wrap content-center justify-center"><p className="text-lg font-bold">이미지가 등록되지 않았습니다.</p></div>
       }</div>
