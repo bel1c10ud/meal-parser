@@ -3,6 +3,9 @@ import {useRouter} from 'next/router';
 import CalendarSkeleton from '../../components/CalendarSkeleton';
 import CalendarLayout from '../../components/CalendarLayout';
 
+const vercel = process.env.VERCEL_URL;
+const url = vercel ? 'https://' + vercel : 'http://localhost:3000';
+
 const currentPath = "calendar";
 
 function Calendar(props) { 
@@ -75,7 +78,7 @@ export async function getStaticProps(context) { console.log("context: ", context
   }
 
   try {
-    let calendarJson = await fetcher(`http://localhost:3000/api/mealCalendar?year=${year}&month=${month}`);
+    let calendarJson = await fetcher(`${url}/api/mealCalendar?year=${year}&month=${month}`);
     return calendarJson.hasOwnProperty(0) ? // 배열이 비어있다면(== 비정상적인 응답)
       { props: { calendarJson, 'dateParams': [year,month] } } : notFoundObject; 
   } catch(error) {
