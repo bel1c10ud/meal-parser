@@ -4,20 +4,21 @@ import Image from 'next/image';
 export default function DetailLayout(props) {
   const detailDate = new Date(props.detailJson.date);
   const dayArray = ['일', '월', '화', '수', '목', '금', '토'];
+  const dateString = detailDate.getFullYear() + "년 "
+  + (detailDate.getMonth()+1).toString() + "월 " 
+  + detailDate.getDate() + "일 "
+  + dayArray[detailDate.getDay()]+"요일"
   return (
     <>
       <Head>
-        <title>{props.detailJson.type + " | " + props.detailJson.date}</title>
+        <title>{props.detailJson.type + " | " + dateString}</title>
       </Head>
       <div className="p-5">
         <div className="">    
           <p className="hidden">{props.detailJson.id}</p>
           <p className="text-base font-bold text-gray-600">
             {
-              detailDate.getFullYear() + "년 "
-              + (detailDate.getMonth()+1).toString() + "월 " 
-              + detailDate.getDate() + "일 "
-              + dayArray[detailDate.getDay()]+"요일"
+              dateString
             }
           </p>
           <p>
