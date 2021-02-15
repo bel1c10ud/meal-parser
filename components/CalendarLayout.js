@@ -2,6 +2,11 @@ import { useEffect, useState } from 'react';
 import {useRouter} from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
+import dayjs from 'dayjs';
+import LocalizedFormat from 'dayjs/plugin/localizedFormat';
+import 'dayjs/locale/ko';
+dayjs.locale('ko')
+dayjs.extend(LocalizedFormat);
 
 import DateController from './DateController';
 
@@ -9,8 +14,6 @@ const currentPath = "calendar";
 
 function CalendarLayout(props) {
   const router = useRouter();
-
-  const dayArray = ['일', '월', '화', '수', '목', '금', '토'];
 
   const [selectedYear, setSelectedYear] = useState(Number(props.dateParams[0]));
   const [selectedMonth, setSelectedMonth] = useState(Number(props.dateParams[1]));
@@ -68,18 +71,18 @@ function CalendarLayout(props) {
     if(c.date === null) {
       return (<div className="py-3 md:px-3 h-full border-b hidden md:block"></div>)
     } else {
-      const currentDate = new Date(c.date);
+      const dayjsDate = dayjs(c.date);
 
       return (
         <div key={c.id} 
         className={`py-3 md:px-3 h-full border-b`}
         >
           <p className={
-            `text-2xl font-medium pr-4 md:mb-2  align-top inline-block md:block group-hover:text-white text-gray-900 ${currentDate.getDay() === 0 ? "text-red-600" : ""} ${currentDate.getDay() === 6 ? "text-blue-600" : ""}`
+            `text-2xl font-medium pr-4 md:mb-2  align-top inline-block md:block group-hover:text-white text-gray-900 ${dayjsDate.day() === 0 ? "text-red-600" : ""} ${dayjsDate.day() === 6 ? "text-blue-600" : ""}`
           }>
-            {currentDate.getDate()}
+            {dayjsDate.date()}
             <span className={`text-xs ml-1 align-middle md:hidden`}>
-              ({dayArray[currentDate.getDay()]})
+              ({dayjsDate.format('ddd')})
             </span>
           </p>
           <div className="inline-block md:block h-auto pl-4 md:pl-0 border-l md:border-l-0 align-middle">
