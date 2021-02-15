@@ -4,7 +4,7 @@
   "theme_color": "#000000",
   "background_color": "#ffffff",
   "display": "fullscreen",
-  "orietation": "portrait",
+  "orientation": "portrait",
   "scope": "/",
   "start_url": "/calendar",
   "icon": [
