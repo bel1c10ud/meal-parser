@@ -1,4 +1,9 @@
 import {useRouter} from 'next/router';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 import CalendarSkeleton from '../../components/CalendarSkeleton';
 import CalendarLayout from '../../components/CalendarLayout';
@@ -27,7 +32,7 @@ export async function getStaticPaths() { return { paths: [], fallback: true } }
 export async function getStaticProps(context) { console.log("context: ", context)
   const fetcher = (...args) => fetch(...args).then(res => res.json());
 
-  const now = new Date();
+  const dayjsDate = dayjs().tz('Asia/Seoul');
   let year, month;
 
   let isRedirect = false;
@@ -54,15 +59,15 @@ export async function getStaticProps(context) { console.log("context: ", context
     }
   } else if(dateParams.length === 1) { // 1 query
     if(Number(dateParams[0]) >= 1 && Number(dateParams[0]) <= 12 ) {
-      year = now.getFullYear();
+      year = dayjsDate.year();
       month = dateParams[0];
       isRedirect = true;
     } else {
       return notFoundObject
     }
   } else if(dateParams.length === 0) { // no query
-    year = now.getFullYear();
-    month = now.getMonth() + 1;
+    year = dayjsDate.year();
+    month = dayjsDate.month() + 1;
     // isRedirect = true; // 쿼리 없이 접근시, redirect 없이 현재 Date를 기준으로 표시
   } else { // other case (3~)
     return notFoundObject
