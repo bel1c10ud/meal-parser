@@ -69,7 +69,7 @@ function CalendarLayout(props) {
 {
   props.calendarJson.map(c => {
     if(c.date === null) {
-      return (<div className="py-3 md:px-3 h-full border-b hidden md:block"></div>)
+      return (<div key={c.id} className="py-3 md:px-3 h-full border-b hidden md:block"></div>)
     } else {
       const dayjsDate = dayjs(c.date);
 

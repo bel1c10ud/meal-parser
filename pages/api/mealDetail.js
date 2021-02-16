@@ -3,7 +3,13 @@ import cheerio from 'cheerio';
 import probe from 'probe-image-size';
 
 export default function(req, res) {
-  const mid = req.query.id === undefined ? 618168 : req.query.id;
+  let mid;
+
+  if(req.query.hasOwnProperty('id')) {
+    mid = req.query.id
+  } else {
+    res.status(400).send({'errorCode': 400});
+  }
 
   axios({
     method: 'POST',
@@ -14,19 +20,36 @@ export default function(req, res) {
     .then(async response => {
       const $ = cheerio.load(response.data);
 
-      let menuArray;
+      const mealType = $('#detailFrm  > table > tbody > tr > td').eq(0).html().trim();
+      const mealDate = $('#detailFrm  > table > tbody > tr > td').eq(1).html()
+      .replace(/일|(월|화|수|목|금)요일/ig, '')
+      .replace(/년|월/ig, '-')
+      .replace(/\s/ig,'')+"T00:00:00+09:00";
+      const mealTitle = $('#detailFrm  > table > tbody > tr > td').eq(2).html().trim();
       const menuString = 
       $('#detailFrm  > table > tbody > tr > td').eq(3).html().trim()
       .replace(/(&amp;)/ig, "&")
       .replace(/\s&/ig, "&") // 1406939 로제소스스파게티 &미트볼
       ;
-      
+      const mealCalorie = $('#detailFrm  > table > tbody > tr > td').eq(4).html();
+
+      // not found meal
+      if(mealType === "") {
+        res.status(404).json({'errorCode': 404});
+      }
+
+    // post process
+
+      // menu string split
+      let menuArray;
+
       if(menuString.includes('\n')) {
         menuArray = menuString.split('\n');
       } else {
         menuArray = menuString.split(',');
       }
 
+      // image size
       let imageInfo = {};
       
       if($('#detailFrm  > table > tbody > tr > td img').attr('src')) {
@@ -35,15 +58,11 @@ export default function(req, res) {
 
       const toJson = {
         id: Number(mid),
-        type: $('#detailFrm  > table > tbody > tr > td').eq(0).html().trim(),
-        date: $('#detailFrm  > table > tbody > tr > td').eq(1).html()
-        .replace(/일|(월|화|수|목|금)요일/ig, '')
-        .replace(/년|월/ig, '-')
-        .replace(/\s/ig,'')+"T00:00:00+09:00"
-        ,
-        title: $('#detailFrm  > table > tbody > tr > td').eq(2).html().trim(),
+        type: mealType,
+        date: mealDate,
+        title: mealTitle,
         menu: menuArray,
-        calorie: $('#detailFrm  > table > tbody > tr > td').eq(4).html(),
+        calorie: mealCalorie,
         image: { 
           'url' : imageInfo.url,
           'width' : imageInfo.width, 
@@ -54,7 +73,6 @@ export default function(req, res) {
       res.json(toJson);
     })
     .catch(error => {
-      res.statusCode = 200;
-      res.send(error);
+      res.status(404).send([{'errorCode': 404}, {'error': error}])
     })
 }

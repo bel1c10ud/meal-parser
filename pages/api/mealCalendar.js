@@ -4,15 +4,15 @@ import cheerio from 'cheerio';
 export default (req, res) => {
   let year, month;
 
-  if(req.query.year !== undefined && req.query.month !== undefined) {
+  if(req.query.hasOwnProperty('year') && req.query.hasOwnProperty('month')) {
     if(req.query.year.length == 4 && (Number(req.query.month) <= 12 && Number(req.query.month) >= 1)) {
       year = req.query.year;
       month = req.query.month;
     } else {
-      res.json([]); // year 4자리, month 1~12를 충족하지 않으면 빈배열 반환
+      res.status(400).send({'errorCode': 400}); // year 4자리, month 1~12를 충족하지 않으면 빈배열 반환
     }
   } else { // query 없이 요청이 오면
-    res.json([]); // 빈배열
+    res.status(400).send({'errorCode': 400}); // 빈배열
   }
 
   axios({
@@ -54,6 +54,6 @@ export default (req, res) => {
 
     res.json(array);
   }).catch(error => {
-
+    res.status(404).send([{'errorCode': 404}, {'error': error}])
   })
 }

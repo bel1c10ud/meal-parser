@@ -7,7 +7,10 @@ export default function DateController(props) {
   return (
     <div className={props.className}>
       <div className="inline-block align-middle mr-4">
-        <Select 
+        <Select
+        id="year-selector"
+        instanceId="year-selector"
+        inputId="year-selector"
         className="w-28 h-10 inline-block mr-2"
         options={yearObject}
         value={{'value':props.selectedYear, 'label': props.selectedYear}}
@@ -15,6 +18,9 @@ export default function DateController(props) {
         isSearchable={false}
         />
         <Select 
+        id="month-selector"
+        instanceId="month-selector"
+        inputId="month-selector"
         className="w-20 h-10 inline-block"
         options={monthObject}
         value={{'value':props.selectedMonth, 'label': props.selectedMonth}}

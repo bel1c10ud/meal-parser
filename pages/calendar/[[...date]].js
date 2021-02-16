@@ -1,4 +1,5 @@
 import {useRouter} from 'next/router';
+import Error from 'next/error';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -17,6 +18,10 @@ function Calendar(props) {
   const router = useRouter(); 
   console.log('Cal render:\n', props , '\nFallback: ', router.isFallback, router);
 
+  if(props.hasOwnProperty('errorCode')) {
+    return <Error statusCode={props.errorCode} />
+  }
+
   return (
     <div className="container mx-auto max-w-6xl p-5">
     {
@@ -30,16 +35,24 @@ function Calendar(props) {
 export async function getStaticPaths() { return { paths: [], fallback: true } }
 
 export async function getStaticProps(context) { console.log("context: ", context)
-  const fetcher = (...args) => fetch(...args).then(res => res.json());
-
-  const dayjsDate = dayjs().tz('Asia/Seoul');
-  let year, month;
-
   let isRedirect = false;
-  const notFoundObject = {notFound: true};
+  const badRequest = { props: { 'errorCode': 400 } };
 
-  const dateParams = context.params.hasOwnProperty('date') ? 
-    context.params.date : [];
+  let dateParams = [];
+
+  if(context.params.hasOwnProperty('date')) {
+    const notNumberRegex = new RegExp(/[^0-9]/, 'ig');
+    for(const value of context.params.date) {
+      if(notNumberRegex.test(value) === true) {
+        return badRequest;
+      } else {
+        dateParams.push(value);
+      }
+    }
+  }
+
+  let year, month;
+  const dayjsDate = dayjs().tz('Asia/Seoul');
 
   if(dateParams.length === 2) { // 2 query
     // set year
@@ -49,13 +62,13 @@ export async function getStaticProps(context) { console.log("context: ", context
       year = `20${dateParams[0]}`;
       isRedirect = true;
     } else {
-      return notFoundObject
+      return badRequest
     }
     // set month
     if(Number(dateParams[1]) >= 1 && Number(dateParams[1]) <= 12 ) {
       month = dateParams[1];
     } else {
-      return notFoundObject
+      return badRequest
     }
   } else if(dateParams.length === 1) { // 1 query
     if(Number(dateParams[0]) >= 1 && Number(dateParams[0]) <= 12 ) {
@@ -63,14 +76,14 @@ export async function getStaticProps(context) { console.log("context: ", context
       month = dateParams[0];
       isRedirect = true;
     } else {
-      return notFoundObject
+      return badRequest
     }
   } else if(dateParams.length === 0) { // no query
     year = dayjsDate.year();
     month = dayjsDate.month() + 1;
     // isRedirect = true; // 쿼리 없이 접근시, redirect 없이 현재 Date를 기준으로 표시
   } else { // other case (3~)
-    return notFoundObject
+    return badRequest
   }
   
   if(isRedirect === true) {
@@ -81,14 +94,18 @@ export async function getStaticProps(context) { console.log("context: ", context
       } 
     }
   }
+  
+  const fetcher = (...args) => fetch(...args).then(res => res.json());
 
   try {
     let calendarJson = await fetcher(`${url}/api/mealCalendar?year=${year}&month=${month}`);
-    return calendarJson.hasOwnProperty(0) ? // 배열이 비어있다면(== 비정상적인 응답)
-      { props: { calendarJson, 'dateParams': [year,month] } } : notFoundObject; 
+
+    return calendarJson.hasOwnProperty('errorCode') ?
+      { props: { 'errorCode': calendarJson.errorCode, 'errorMessage': 'Error code in API'} } : 
+      { props: { 'dateParams': [year,month], calendarJson } }; 
   } catch(error) {
     console.log(error)
-    return notFoundObject;
+    return { props: { 'errorCode': 404, 'error': error } };
   }
 }
 
