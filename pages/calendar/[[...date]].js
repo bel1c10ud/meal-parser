@@ -15,8 +15,7 @@ const url = vercel ? 'https://' + vercel : 'http://localhost:3000';
 const currentPath = "calendar";
 
 function Calendar(props) { 
-  const router = useRouter(); 
-  console.log('Cal render:\n', props , '\nFallback: ', router.isFallback, router);
+  const router = useRouter();
 
   if(props.hasOwnProperty('errorCode')) {
     return <Error statusCode={props.errorCode} />
@@ -34,7 +33,7 @@ function Calendar(props) {
 
 export async function getStaticPaths() { return { paths: [], fallback: true } }
 
-export async function getStaticProps(context) { console.log("context: ", context)
+export async function getStaticProps(context) {
   let isRedirect = false;
   const badRequest = { props: { 'errorCode': 400 } };
 
@@ -104,7 +103,6 @@ export async function getStaticProps(context) { console.log("context: ", context
       { props: { 'errorCode': calendarJson.errorCode, 'errorMessage': 'Error code in API'} } : 
       { props: { 'dateParams': [year,month], calendarJson } }; 
   } catch(error) {
-    console.log(error)
     return { props: { 'errorCode': 404, 'error': error } };
   }
 }

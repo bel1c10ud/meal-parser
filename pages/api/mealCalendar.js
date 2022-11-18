@@ -18,7 +18,7 @@ export default (req, res) => {
   axios({
     method: 'POST',
     url: '/65129/subMenu.do',
-    baseURL: 'http://sunrint.hs.kr',
+    baseURL: process.env.SCHOOL_URL,
     data: 
     'viewType=calendar'
     +'&siteId=SEI_00000964'

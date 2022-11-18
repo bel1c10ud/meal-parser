@@ -33,13 +33,13 @@ export default function DateController(props) {
         className="w-10 h-10 border border-gray-300 text-gray-400 rounded-full hover:border-gray-400 mr-2"
         onClick={() => props.prevNextDate(-1)}
         >
-          &#xE000;
+          { '\<' }
         </button>
         <button 
         className="w-10 h-10 border border-gray-300 text-gray-400 rounded-full hover:border-gray-400"
         onClick={() => props.prevNextDate(1)}
         >
-          &#xE001;
+          { '\>' }
         </button>
       </div>
     </div>

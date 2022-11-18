@@ -14,7 +14,7 @@ export default function(req, res) {
   axios({
     method: 'POST',
     url: '/dggb/module/mlsv/selectMlsvDetailPopup.do',
-    baseURL : 'http://sunrint.hs.kr',
+    baseURL : process.env.SCHOOL_URL,
     data: 'mlsvId=' + mid
   })
     .then(async response => {
@@ -53,7 +53,7 @@ export default function(req, res) {
       let imageInfo = {};
       
       if($('#detailFrm  > table > tbody > tr > td img').attr('src')) {
-        imageInfo = await probe('http://sunrint.hs.kr' + $('#detailFrm  > table > tbody > tr > td img').attr('src'));
+        imageInfo = await probe(process.env.SCHOOL_URL + $('#detailFrm  > table > tbody > tr > td img').attr('src'));
       }
 
       const toJson = {

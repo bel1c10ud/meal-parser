@@ -10,7 +10,6 @@ const url = vercel ? 'https://' + vercel : 'http://localhost:3000';
 
 export default function Detail(props) {
   const router = useRouter();
-  console.log('detail render:\n', props , '\nFallback: ', router.isFallback, router);
 
   if(props.hasOwnProperty('errorCode')) {
     return <Error statusCode={props.errorCode} />

@@ -7,6 +7,6 @@ module.exports = withPWA({
     runtimeCaching
   },
   images: {
-    domains: ['sunrint.hs.kr']
+    domains: [process.env.SCHOOL_ADDRESS]
   }
 });
