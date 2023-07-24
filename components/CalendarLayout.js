@@ -4,9 +4,11 @@ import Head from 'next/head';
 import Link from 'next/link';
 import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
+import timezone from 'dayjs/plugin/timezone';
 import 'dayjs/locale/ko';
 dayjs.locale('ko')
 dayjs.extend(LocalizedFormat);
+dayjs.extend(timezone);
 
 import DateController from './DateController';
 
@@ -71,8 +73,8 @@ function CalendarLayout(props) {
     if(c.date === null) {
       return (<div key={c.id} className="py-3 md:px-3 h-full border-b hidden md:block"></div>)
     } else {
-      const dayjsDate = dayjs(c.date);
-
+      const dayjsDate = dayjs(c.date).tz('Asia/Seoul');
+      
       return (
         <div key={c.id} 
         className={`py-3 md:px-3 h-full border-b`}
